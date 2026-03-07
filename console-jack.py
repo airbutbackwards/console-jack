@@ -1,4 +1,5 @@
 import random
+import os #solely for clearing terminal
 
 playing = True
 
@@ -86,6 +87,12 @@ def initialize():
         cards[card] = 4
     cards["1"] = 0
 
+def clearConsole(): #for clearing
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+
 # picks a random card for the picker
 def pickCard(picker):
     available = [item for item, count in cards.items() if count >= 1]
@@ -114,9 +121,11 @@ def calculateHand(target):
             totalDealer += values[card] * count
 
 def showHand(hand):
-    cards = [f"{count} {card}" for card, count in hand.items() if count > 0]
-    print("You have: " + ", ".join(cards))
+    cardlist = [f"{count} {card}" for card, count in hand.items() if count > 0]
+    print("You have: " + ", ".join(cardlist))
 
+
+clearConsole()
 print("Welcome to Blackjack!")
 
 
@@ -143,12 +152,11 @@ while playing == True:
 
     Hit=True
     while Hit==True:
-
-        print("")
+        clearConsole()
         print("The dealer's card totals ",totalDealer)
         showHand(playerHand)
         print("Your cards total to ",totalPlayer,".")
-
+        playerBust = False
         if totalPlayer <= 21:
             qHit = input("Would you like to hit (Y/N): ")
             if qHit == "Y":
@@ -167,12 +175,19 @@ while playing == True:
             else:
                 Hit = False
                 print("You busted!")
+                playerBust = True
                 totalPlayer = 0
         
+    clearConsole()
 
     #  calculate winner
 
     #get dealers final cards
+
+    if playerBust:
+        print("You busted!")
+    else:
+        print("Your cards total to ",totalPlayer,".")
     pickCard('dealer')
     calculateHand('dealer')
     print("The dealer has", totalDealer, ".")
@@ -188,7 +203,6 @@ while playing == True:
 
 
     if totalPlayer > totalDealer:
-        print("The dealer has", totalDealer, ".")
         print("You win!")
         print("You have won ", (bet*2), " money.")
         money += (bet*2)
@@ -197,7 +211,6 @@ while playing == True:
         print("You got your money back.")
         money += bet
     if totalPlayer < totalDealer:
-        print("The dealer has", totalDealer, ".")
         print("You have lost!")
 
     if money > 0:
@@ -206,6 +219,7 @@ while playing == True:
             pass
         if playQuestion == 'N':
             playing = False
+            clearConsole()
     else:
         print("You have no more money. Get outta here!")
         playing = False
