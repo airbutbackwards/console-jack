@@ -86,6 +86,7 @@ def initialize():
     for card,count in cards.items():
         cards[card] = 4
     cards["1"] = 0
+    playerBust = False
 
 def clearConsole(): #for clearing
     if os.name == 'nt':
@@ -155,7 +156,7 @@ while playing == True:
         clearConsole()
         print("The dealer's card totals ",totalDealer)
         showHand(playerHand)
-        print("Your cards total to ",totalPlayer,".")
+        print(f"Your cards total to {totalPlayer}.")
         playerBust = False
         if totalPlayer <= 21:
             qHit = input("Would you like to hit (Y/N): ")
@@ -174,8 +175,9 @@ while playing == True:
                 calculateHand('player')
             else:
                 Hit = False
-                print("You busted!")
+                #print("You busted!") #cleared just after so pointless
                 playerBust = True
+                prebust = totalPlayer
                 totalPlayer = 0
         
     clearConsole()
@@ -185,33 +187,36 @@ while playing == True:
     #get dealers final cards
 
     if playerBust:
-        print("You busted!")
+        print(f"You busted! You had a total of {prebust}.")
     else:
-        print("Your cards total to ",totalPlayer,".")
+        print(f"Your cards total to {totalPlayer}.")
     pickCard('dealer')
     calculateHand('dealer')
-    print("The dealer has", totalDealer, ".")
+    print(f"The dealer has {totalDealer}.")
     while totalDealer < 17:
-        print("The dealer's hand is worth", totalDealer, ". He pulls again.")
+        print("He pulls again.")
         pickCard('dealer')
         calculateHand('dealer')
+        print(f"The dealer has {totalDealer}.")
         
-    #win calc
-    if totalDealer > 21:
-        print('Dealer busted with', totalDealer, "!")
-        totalDealer = 0
 
+    if not playerBust:
+        #win calc
+        if totalDealer > 21:
+            print("Dealer busted!")
+            totalDealer = 0
 
-    if totalPlayer > totalDealer:
-        print("You win!")
-        print("You have won ", (bet*2), " money.")
-        money += (bet*2)
-    if totalPlayer == totalDealer:
-        print("You have tied.")
-        print("You got your money back.")
-        money += bet
-    if totalPlayer < totalDealer:
-        print("You have lost!")
+        
+        if totalPlayer > totalDealer:
+            print("You win!")
+            print(f"You have won {(bet*2)} money.")
+            money += (bet*2)
+        if totalPlayer == totalDealer:
+            print("You have tied.")
+            print("You got your money back.")
+            money += bet
+        if totalPlayer < totalDealer:
+            print("You have lost!")
 
     if money > 0:
         playQuestion = input("Would you like to play again? (Y/N): ")
